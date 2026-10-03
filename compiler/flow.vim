@@ -1,0 +1,29 @@
+if exists("g:current_compiler")
+  finish
+endif
+let g:current_compiler = "mach"
+
+let s:cpo_save = &cpo
+set cpo&vim
+
+if exists(':CompilerSet') != 2
+  command -nargs=* CompilerSet setlocal <args>
+endif
+
+if filereadable("Makefile") || filereadable("makefile")
+  CompilerSet makeprg=make
+else
+  CompilerSet makeprg=flow\ compiler\ .
+endif
+
+CompilerSet errorformat=
+  \%f:%l:%c:\ %trror:\ %m,
+  \%f:%l:%c:\ %tarning:\ %m,
+  \%f:%l:\ %trror:\ %m,
+  \%f:%l:\ %tarning:\ %m,
+  \%-G%.%#
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
+
+" vim: et sw=2 sts=2 ts=8
