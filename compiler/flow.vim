@@ -10,10 +10,11 @@ if exists(':CompilerSet') != 2
   command -nargs=* CompilerSet setlocal <args>
 endif
 
-if filereadable("Makefile") || filereadable("makefile")
-  CompilerSet makeprg=make
+"if filereadable("Makefile") || filereadable("makefile")
+if filereadable("flow.toml")
+  CompilerSet makeprg=flow\ build
 else
-  CompilerSet makeprg=flow\ compiler\ .
+  CompilerSet makeprg=flow\ compiler\ %:t:r
 endif
 
 CompilerSet errorformat=

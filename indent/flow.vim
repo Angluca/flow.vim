@@ -25,7 +25,8 @@ fun! GetFlowIndent(lnum)
 
     let prevLineNum = prevnonblank(a:lnum-1)
     let prevLine = getline(prevLineNum)
-    let ind = indent(prevLineNum) 
+    let indp = indent(prevLineNum) 
+    let indc = indent(currentLineNum) 
     let sw = shiftwidth()
 
     "if prevLine =~ '\v\($'
@@ -44,8 +45,21 @@ fun! GetFlowIndent(lnum)
     "endif
   
     "if prevLine =~ '\v([^(]&[^\[]&[^\{]&[^:])+(\#.*)?$'
-    if prevLine =~ '\v[:].*;\s*(\#.*)?$'
-        return ind
+    "if prevLine =~ '\v[:].*;\s*(\#.*)?$'
+        "return indp
+    "endif
+
+    if currentLine =~ '\v^\s*[)\]}]+\s*(\/\/.*)?$'
+        return indc
+    endif
+    if prevLine =~ '\v^\s*break\s*(\/\/.*)?$'
+        return indp - sw
+    endif
+    if prevLine =~ '\v([(\[{:])\s*(\/\/.*)?$'
+        return indp + sw
+    endif
+    if prevLine =~ '\v([^(]&[^\[]&[^\{]&[^:])\s*$'
+        return indp
     endif
 
     return cindent(a:lnum)

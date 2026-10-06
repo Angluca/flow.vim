@@ -2,11 +2,13 @@ if exists("b:current_syntax")
     finish
 endif
 
-syntax keyword flowKeyword function struct enum type trait impl effect capability extern const flow state param solver import module export theorem assume shader
-syntax keyword flowControl if elif else while for in to step parallel return match default handle with break continue when always every evolves as
-syntax keyword flowOperator and or not
-syntax keyword flowBoolean true false null
-"syntax keyword flowType i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 bool string void array ptr vec
+syn keyword flowKeyword function trait impl effect extern const module export theorem assume shader
+syn keyword flowKeyword state param solver becomes reaches input output nerver connect unit
+syn keyword flowKeyword method with always every evolves
+syn keyword flowKeyword parallel handle
+syn keyword flowOperator and or not
+syn keyword flowBoolean true false null
+"syn keyword flowType i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 bool string void array ptr vec
 
 syn keyword flowKeyword let var val const static pub fun inline typedef
 syn keyword flowKeyword export extern opaque embed register restrict
@@ -16,7 +18,7 @@ syn keyword flowType bool array vec void string ptr
 syn keyword flowType int uint long ulong
 syn keyword flowType float double f32 f64 f128
 
-syn keyword flowLabel default ref deref mut
+syn keyword flowLabel default ref deref mut as
 "syn keyword flowConstant true false null
 syn keyword flowSComment assert
 "syn keyword flowMacro std
@@ -27,7 +29,7 @@ syn keyword flowSComment assert
 
 syn keyword flowSelf self
 syn keyword flowRepeat do while loop for in to step
-syn keyword flowStatement break continue return with always every evolves as
+syn keyword flowStatement break continue return
 syn keyword flowConditional if or else elif match unless switch case
 syn keyword flowInclude include link when import
 
@@ -44,8 +46,8 @@ syn keyword flowInclude include link when import
 "syn match   flowType     '\v<half[234]?>'
 "syn match   flowType     '\v<float([234](x[234])?)?>'
 "syn match   flowType     '\v<[dbui]?vec[234]>'
-syn match   flowType     '\v<vec[234][dbfhui]?>'
-syn match   flowType     '\v<mat[234](x[234]f)?>'
+"syn match   flowType     '\v<vec[234][dbfhui]?>'
+"syn match   flowType     '\v<mat[234](x[234]f)?>'
 "syn match   flowType     '\v<(vec|mat|list)\ze\['
 
 syn match flowPreProc   '[@]'
@@ -64,30 +66,29 @@ syn match flowType      '\v<\w+>\ze(::|\<(\w+\s*(\<.*\>|\[.*\])?\s*[,]?\s*)*\>)'
 syn match flowFunc      '\v\w+\ze((\[[^=;]*\])|((::)?\<.*\>))*\s*\('
 
 syn match flowException '\v(\W@<=[~*@!?^]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[!]+\ze\W)'
-syn match flowType      '\v((::)|(:\^)|(:\~))@<=\w\w*'
-syn match flowLabel     '\v(\-\>)|(:\^)|(:\~)|(:\>)|(::)'
-
 syn match flowType      '\v<[uif]\d+(x\d+)+>' "f64x6
 syn match flowAdded     '\v^\s*<(test)\ze\s+'
 "syn match flowInclude   '\v^<(use|fwd).*'
-syn match flowSComment  '\v\$(\w+)'
+syn match flowSComment  '\v[$@](\w+)'
 "syn match flowType      '\v<(res|opt)\ze\s*\['
 "syn match flowMacro     '\v^\s*\[.{-}\]'
 "syn match flowType      '\v<(str)\ze\s*\('
 ""syn match flowSMacro    '\v<(reduce|deref|list)\ze\s*\('
 "syn match flowLabel     '\v<(addr)\ze\s*\('
+syn match flowLabel     '\v(\-\>)|(\|\>)'
+syn match flowFunc      '\v(\|\>)@<=\s*\w\w*'
 
-"syn match flowInclude "\v^\s*(use|fwd)>" nextgroup=flowRepeat,flowString,flowSymbol skipwhite
-syn match flowRepeat "\v\w+" contained nextgroup=flowString,flowSymbol,flowRepeat skipwhite
-"syn match flowSymbol ":" contained nextgroup=flowString,flowRepeat skipwhite
-syn match flowString "\v(\w+\.)+" contained nextgroup=flowRepeat skipwhite
-syn match flowString "\v:\s*(\w+(\.\w+)*)" contained
+"syn match flowInclude "\v^\s*(import)>" nextgroup=flowRepeat,flowString,flowSymbol skipwhite
+"syn match flowRepeat "\v\w+" contained nextgroup=flowString,flowSymbol,flowRepeat skipwhite
+""syn match flowSymbol ":" contained nextgroup=flowString,flowRepeat skipwhite
+"syn match flowString "\v(\w+\.)+" contained nextgroup=flowRepeat skipwhite
+"syn match flowString "\v:\s*(\w+(\.\w+)*)" contained
 
 syn match flowConstant contained /\v[\<,\>]/
 syn region flowConstantSpec
     \ oneline
     \ keepend
-    \ contains=flowType,flowOperator,flowMacro,flowSComment,flowConstant,flowConstantSpec
+    \ contains=flowType,flowOperator,flowMacro,flowSComment,flowConstant,flowConstantSpec,flowNumber,flowFloat
     \ start=/\v\<\s*/
     \ end=/\v\s*\>/
 
@@ -146,7 +147,8 @@ syn match flowFormat '{{\|}}' contained display
 
 hi def link flowPreProc               PreProc
 hi def link flowSuper                 Title
-hi def link flowFloat                 Constant
+"hi def link flowFloat                 Constant
+hi def link flowFloat                 Underlined
 hi def link flowInteger               Number
 hi def link flowEscape                SpecialComment
 hi def link flowFormat                SpecialChar
@@ -176,9 +178,9 @@ hi def link flowPanic                 Exception
 syn match   flowTypedef "\h\w*" display contained
 syn match   flowFunc "\h\w*" display contained
 "syn keyword flowKeyword union struct enum type nextgroup=flowTypedef skipwhite skipempty
-syn keyword flowKeyword def rec uni tag nextgroup=flowTypedef skipwhite 
+syn keyword flowKeyword flow union struct enum type capability represent analyze nextgroup=flowTypedef skipwhite
 "syn keyword flowKeyword union nextgroup=flowTypedef skipwhite skipempty contained
-syn keyword flowKeyword fun nextgroup=flowFunc skipwhite
+syn keyword flowKeyword function nextgroup=flowFunc skipwhite
 "syn keyword flowAdded test nextgroup=flowFunc skipwhite
 "syn keyword flowTypedef asm nextgroup=flowRepeat skipwhite skipempty
 syn keyword flowTodo contained TODO FIXME XXX NOTE
@@ -187,24 +189,24 @@ syn match   flowComment  '\v\#.*$' contains=flowTodo,@Spell
 syn match   flowPreProc  '\v\#\[\w+.{-}\]'
 
 " flowAsm
-hi def link flowAsmEntry Changed
-hi def link flowAsmMacro Macro
-hi def link flowAsmCmd SpecialComment
-hi def link flowAsmCall Changed
-hi def link flowAsmGoto Label
+"hi def link flowAsmEntry Changed
+"hi def link flowAsmMacro Macro
+"hi def link flowAsmCmd SpecialComment
+"hi def link flowAsmCall Changed
+"hi def link flowAsmGoto Label
 
-syn keyword flowAsmMacro main contained containedin=ALLBUT,flowAsm
-"syn keyword flowAsmCmd mov contained containedin=ALLBUT,flowAsm
-syn region flowAsm start=/\v[^#]?(^|\{)\s*asm\s+\w+\s*\{/
-    \ end=/\v((^|\{)\s*asm\s+\w+\s*\{[^}]*\})|(\s*\})\s*$/
-    \ contains=flowAsmEntry,flowAsmCmd,flowAsmCall,flowAsmMacro,flowAsmGoto,flowComment,flowConstant,flowSymbol,flowOperator,flowType,flowNumber,flowFloat,flowInteger
-    \ containedin=ALLBUT,flowAsm keepend
-syn match flowAsmEntry '\v\s*asm\s+' contained containedin=ALLBUT,flowAsm
-syn match flowAsmMacro /\v\s*asm\s+\w+/ contained containedin=ALLBUT,flowAsm
-syn match flowAsmMacro '\v<_\w+>' contained containedin=ALLBUT,flowAsm
-syn match flowAsmCmd '\v^\s+\.?\w+(\.\w+)*\s' contained containedin=ALLBUT,flowAsm
-syn match flowAsmCall '\v^\s+\.?\w+(\.\w+)*\s*$' contained containedin=ALLBUT,flowAsm
-syn match flowAsmGoto '\v^\s*\w+\ze:' contained containedin=ALLBUT,flowAsm
+"syn keyword flowAsmMacro main contained containedin=ALLBUT,flowAsm
+""syn keyword flowAsmCmd mov contained containedin=ALLBUT,flowAsm
+"syn region flowAsm start=/\v[^#]?(^|\{)\s*asm\s+\w+\s*\{/
+    "\ end=/\v((^|\{)\s*asm\s+\w+\s*\{[^}]*\})|(\s*\})\s*$/
+    "\ contains=flowAsmEntry,flowAsmCmd,flowAsmCall,flowAsmMacro,flowAsmGoto,flowComment,flowConstant,flowSymbol,flowOperator,flowType,flowNumber,flowFloat,flowInteger
+    "\ containedin=ALLBUT,flowAsm keepend
+"syn match flowAsmEntry '\v\s*asm\s+' contained containedin=ALLBUT,flowAsm
+"syn match flowAsmMacro /\v\s*asm\s+\w+/ contained containedin=ALLBUT,flowAsm
+"syn match flowAsmMacro '\v<_\w+>' contained containedin=ALLBUT,flowAsm
+"syn match flowAsmCmd '\v^\s+\.?\w+(\.\w+)*\s' contained containedin=ALLBUT,flowAsm
+"syn match flowAsmCall '\v^\s+\.?\w+(\.\w+)*\s*$' contained containedin=ALLBUT,flowAsm
+"syn match flowAsmGoto '\v^\s*\w+\ze:' contained containedin=ALLBUT,flowAsm
 
 
 syn sync fromstart
