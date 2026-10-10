@@ -2,21 +2,21 @@ if exists("b:current_syntax")
     finish
 endif
 
-syn keyword flowKeyword function trait impl effect extern const module export theorem assume shader
+syn keyword flowKeyword function fn trait impl effect extern const module export theorem assume therefore shader
 syn keyword flowKeyword state param solver becomes reaches input output nerver connect unit
 syn keyword flowKeyword method with always every evolves
-syn keyword flowKeyword parallel handle
+syn keyword flowKeyword parallel handle distinct
 syn keyword flowOperator and or not
 syn keyword flowBoolean true false null
 "syn keyword flowType i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 bool string void array ptr vec
 
-syn keyword flowKeyword let var val const static pub fun inline typedef
-syn keyword flowKeyword export extern opaque embed register restrict
+syn keyword flowKeyword let var val const static pub fun typedef
+syn keyword flowKeyword export extern expect opaque embed register restrict
 syn keyword flowKeyword impl alias volatile async rec uni ext def tag sel
-syn keyword flowType bool array vec void string ptr
+syn keyword flowType bool array vec void string ptr span
 "syn keyword flowType isize usize
 syn keyword flowType int uint long ulong
-syn keyword flowType float double f32 f64 f128
+syn keyword flowType float double f32 f64
 
 syn keyword flowLabel default ref deref mut as
 "syn keyword flowConstant true false null
@@ -29,9 +29,10 @@ syn keyword flowSComment assert
 
 syn keyword flowSelf self
 syn keyword flowRepeat do while loop for in to step
+syn keyword flowRepeat sort sortBy descending unique
 syn keyword flowStatement break continue return
 syn keyword flowConditional if or else elif match unless switch case
-syn keyword flowInclude include link when import
+syn keyword flowInclude include link when
 
 "syn keyword flowException throw try catch cast raw
 "syn keyword flowPanic panic
@@ -68,7 +69,8 @@ syn match flowFunc      '\v\w+\ze((\[[^=;]*\])|((::)?\<.*\>))*\s*\('
 syn match flowException '\v(\W@<=[~*@!?^]+\ze[\(\[\{\<]*[-]?\w)|(\w@<=[!]+\ze\W)'
 syn match flowType      '\v<[uif]\d+(x\d+)+>' "f64x6
 syn match flowAdded     '\v^\s*<(test)\ze\s+'
-"syn match flowInclude   '\v^<(use|fwd).*'
+syn match flowInclude   '\v<(import)'
+syn match flowInclude   '\v^<(import).*'
 syn match flowSComment  '\v[$@](\w+)'
 "syn match flowType      '\v<(res|opt)\ze\s*\['
 "syn match flowMacro     '\v^\s*\[.{-}\]'
@@ -78,11 +80,13 @@ syn match flowSComment  '\v[$@](\w+)'
 syn match flowLabel     '\v(\-\>)|(\|\>)'
 syn match flowFunc      '\v(\|\>)@<=\s*\w\w*'
 
-"syn match flowInclude "\v^\s*(import)>" nextgroup=flowRepeat,flowString,flowSymbol skipwhite
-"syn match flowRepeat "\v\w+" contained nextgroup=flowString,flowSymbol,flowRepeat skipwhite
-""syn match flowSymbol ":" contained nextgroup=flowString,flowRepeat skipwhite
+syn match flowInclude "\v^\s*(import)>" nextgroup=flowRepeat,flowString,flowSymbol skipwhite
+syn match flowRepeat "\v\w+" contained nextgroup=flowString,flowSymbol,flowRepeat skipwhite
+"syn match flowSymbol ":" contained nextgroup=flowString,flowRepeat skipwhite
 "syn match flowString "\v(\w+\.)+" contained nextgroup=flowRepeat skipwhite
+"syn match flowString "\v\s+<as>\s+" contained nextgroup=flowRepeat skipwhite
 "syn match flowString "\v:\s*(\w+(\.\w+)*)" contained
+syn match flowString "\v\s*(\w+(\.\w+)*)(\s+as\s+)*" contained
 
 syn match flowConstant contained /\v[\<,\>]/
 syn region flowConstantSpec
